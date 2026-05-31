@@ -558,7 +558,7 @@ tr:last-child td{
     opacity:1;
 }
 
-@media(max-width:900px){
+@media(max-width:1024px){
     .kpis{
         grid-template-columns:repeat(2,1fr);
     }
@@ -572,7 +572,7 @@ tr:last-child td{
     }
 }
 
-@media(max-width:600px){
+@media(max-width:768px){
     .sidebar{
         width:60px;
     }
