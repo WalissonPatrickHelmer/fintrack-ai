@@ -5,7 +5,7 @@
 
 // --- 1. ESTADO GLOBAL ---
 let dados = JSON.parse(localStorage.getItem('ft_dados') || '[]');
-let cfg = JSON.parse(localStorage.getItem('ft_cfg') || '{"url":""}');
+let cfg = JSON.parse(localStorage.getItem('ft_cfg') || '{"url":"https://script.google.com/macros/s/AKfycbxusaS0Vi0_l33e9m8IA8duw3IhohOXsd-YhkSHYYNriXZtQNccjLGgWqC5-u8cnPwjGA/exec"}');
 let cats = JSON.parse(localStorage.getItem('ft_cats') || '["Alimentação","Transporte","Moradia","Saúde","Lazer","Educação","Energia","Água","Internet","Salário","Freelance","Investimento","Outros"]');
 
 let currentTab = 'dashboard';
