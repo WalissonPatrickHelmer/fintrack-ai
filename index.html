@@ -745,19 +745,20 @@ function setSyncStatus(msg){
 async function enviarSheets(t){
   if(!cfg.url){return false;}
   try{
-    // Usa no-cors pois Apps Script não retorna headers CORS no POST
-    // mas o dado é enviado corretamente
-    await fetch(cfg.url,{
-      method:'POST',
-      mode:'no-cors',
-      redirect:'follow',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({
-        id:String(t.id), data:t.data, tipo:t.tipo,
-        categoria:t.categoria, descricao:t.descricao,
-        valor:t.valor
-      })
+    // GET via parâmetros — funciona sem CORS em qualquer ambiente
+    const params = new URLSearchParams({
+      action: 'add',
+      id: String(t.id),
+      data: t.data,
+      tipo: t.tipo,
+      categoria: t.categoria,
+      descricao: t.descricao,
+      valor: String(t.valor)
     });
+    const img = new Image();
+    img.src = cfg.url + '?' + params.toString();
+    // Também tenta fetch como fallback
+    fetch(cfg.url + '?' + params.toString(), {mode:'no-cors'}).catch(()=>{});
     return true;
   }catch(e){console.warn('Sheets sync falhou:',e);return false;}
 }
@@ -953,10 +954,10 @@ async function limparSheets(){
   if(!confirm('Segunda confirmação: apagar TUDO da planilha?'))return;
   toast('🗑️ Limpando planilha...');
   try{
-    // Usa GET com parâmetro para contornar CORS
-    const url = cfg.url + '?action=clear';
-    await fetch(url, {method:'GET', mode:'no-cors'});
-    toast('✅ Planilha limpa! Atualize o Google Sheets para confirmar.');
+    const img = new Image();
+    img.src = cfg.url + '?action=clear&t=' + Date.now();
+    fetch(cfg.url + '?action=clear', {mode:'no-cors'}).catch(()=>{});
+    setTimeout(()=>toast('✅ Planilha limpa! Atualize o Google Sheets para confirmar.'), 2000);
   }catch(e){
     toast('⚠ Erro ao conectar.',true);
   }
