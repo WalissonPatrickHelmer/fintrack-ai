@@ -742,10 +742,11 @@ function setSyncStatus(msg){
 }
 
 // ── Google Sheets ─────────────────────────────────────────────────────────────
+const PROXY = 'https://fintrack-proxy.wpatrickhelmer.workers.dev';
+
 async function enviarSheets(t){
   if(!cfg.url){return false;}
   try{
-    // GET via parâmetros — funciona sem CORS em qualquer ambiente
     const params = new URLSearchParams({
       action: 'add',
       id: String(t.id),
@@ -755,11 +756,10 @@ async function enviarSheets(t){
       descricao: t.descricao,
       valor: String(t.valor)
     });
-    const img = new Image();
-    img.src = cfg.url + '?' + params.toString();
-    // Também tenta fetch como fallback
-    fetch(cfg.url + '?' + params.toString(), {mode:'no-cors'}).catch(()=>{});
-    return true;
+    const targetUrl = cfg.url + '?' + params.toString();
+    const resp = await fetch(PROXY + '?url=' + encodeURIComponent(targetUrl));
+    const json = await resp.json();
+    return json.ok !== false;
   }catch(e){console.warn('Sheets sync falhou:',e);return false;}
 }
 
@@ -769,10 +769,12 @@ async function testarConexao(){
   if(!url){st.textContent='⚠ Cole a URL do script primeiro'; st.style.color='var(--r)';return;}
   st.textContent='🔌 Testando conexão...'; st.style.color='var(--t2)';
   try{
-    await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({test:true})});
-    st.textContent='✅ URL válida! Agora salve e teste adicionando uma transação.'; st.style.color='var(--g)';
+    const targetUrl = url + '?action=ping';
+    const resp = await fetch(PROXY + '?url=' + encodeURIComponent(targetUrl));
+    const json = await resp.json();
+    st.textContent='✅ Conexão estabelecida! Sheets pronto.'; st.style.color='var(--g)';
   }catch(e){
-    st.textContent='⚠ Não foi possível conectar. Verifique a URL e se o script está publicado como Web App.'; st.style.color='var(--r)';
+    st.textContent='⚠ Não foi possível conectar. Verifique a URL.'; st.style.color='var(--r)';
   }
 }
 
@@ -954,10 +956,11 @@ async function limparSheets(){
   if(!confirm('Segunda confirmação: apagar TUDO da planilha?'))return;
   toast('🗑️ Limpando planilha...');
   try{
-    const img = new Image();
-    img.src = cfg.url + '?action=clear&t=' + Date.now();
-    fetch(cfg.url + '?action=clear', {mode:'no-cors'}).catch(()=>{});
-    setTimeout(()=>toast('✅ Planilha limpa! Atualize o Google Sheets para confirmar.'), 2000);
+    const targetUrl = cfg.url + '?action=clear';
+    const resp = await fetch(PROXY + '?url=' + encodeURIComponent(targetUrl));
+    const json = await resp.json();
+    if(json.ok) toast('✅ Planilha limpa com sucesso!');
+    else toast('⚠ Erro: ' + (json.erro||'desconhecido'), true);
   }catch(e){
     toast('⚠ Erro ao conectar.',true);
   }
