@@ -554,7 +554,6 @@ tr:last-child td{
 }
 
 @media(max-width:900px){
-
     .kpis{
         grid-template-columns:repeat(2,1fr);
     }
@@ -569,7 +568,6 @@ tr:last-child td{
 }
 
 @media(max-width:600px){
-
     .sidebar{
         width:60px;
     }
@@ -589,6 +587,47 @@ tr:last-child td{
 
     .kpis{
         grid-template-columns:1fr 1fr;
+        gap:.6rem;
+    }
+    
+    .kpi{
+        padding:.7rem .8rem;
+    }
+    
+    .kv{
+        font-size:1.15rem;
+    }
+
+    .content{
+        padding:.8rem;
+    }
+    
+    .filters{
+        grid-template-columns:1fr;
+        gap:.6rem;
+    }
+    
+    .rfields{
+        grid-template-columns:1fr;
+        gap:.6rem;
+    }
+    
+    .ocr-box{
+        padding:1.2rem;
+    }
+    
+    .topbar{
+        padding:.6rem 1rem;
+    }
+    
+    .ptitle{
+        font-size:.85rem;
+    }
+    
+    .sync-badge{
+        font-size:.58rem;
+        padding:.15rem .35rem;
     }
 }
+
 
