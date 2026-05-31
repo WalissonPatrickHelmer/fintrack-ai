@@ -470,25 +470,7 @@ const KW_CAT = {
   'Investimento': ['investimento','ação','fundo','renda fixa','tesouro','cdb','poupança','cripto','bitcoin'],
 };
 
-// ── Tentar Claude API ────────────────────────────────────────────────────────
-async function tentarClaude(prompt, imgB64){
-  const content=[];
-  if(imgB64) content.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:imgB64}});
-  content.push({type:'text',text:prompt});
-  const resp = await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
-    body:JSON.stringify({
-      model:'claude-sonnet-4-20250514', max_tokens:500,
-      system:`Assistente financeiro. Retorne APENAS JSON sem markdown: {"tipo":"despesa|receita","categoria":"string","descricao":"string","valor":number,"data":"YYYY-MM-DD"}. Categorias disponíveis: ${cats.join(', ')}. Data padrão se não mencionada: ${hoje()}.`,
-      messages:[{role:'user',content}]
-    })
-  });
-  if(!resp.ok) throw new Error('api_err_'+resp.status);
-  const d=await resp.json();
-  const text=d.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
-  return JSON.parse(text);
-}
+// ── Análise via IA removida (API Anthropic bloqueada no browser por CORS) ────
 
 // ── Analisar Texto ───────────────────────────────────────────────────────────
 async function analisarTexto(){
@@ -498,14 +480,9 @@ async function analisarTexto(){
   const st=document.getElementById('status-txt');
   btn.disabled=true; btn.textContent='⏳ Analisando...';
   st.style.display='block'; st.className='status-bar'; st.textContent='Processando...';
-  let result;
-  try{
-    result=await tentarClaude(`Analise esta transação financeira: "${v}"`);
-    st.textContent='✓ Analisado com Claude AI'; st.className='status-bar ok';
-  }catch(e){
-    result=analisarLocal(v);
-    st.textContent='✓ Analisado localmente — confira os dados'; st.className='status-bar ok';
-  }
+  // Análise local inteligente — funciona 100% offline e em qualquer ambiente
+  const result = analisarLocal(v);
+  st.textContent='✓ Analisado — confira os dados'; st.className='status-bar ok';
   preencherResult(result);
   btn.disabled=false; btn.textContent='✨ Analisar';
 }
