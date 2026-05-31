@@ -28,11 +28,14 @@ body{
     background:var(--bg);
     color:var(--t1);
     min-height:100vh;
+    overflow-x:hidden;
 }
 
 .app{
     display:flex;
     min-height:100vh;
+    max-width:100vw;
+    overflow-x:hidden;
 }
 
 .sidebar{
@@ -102,6 +105,8 @@ body{
     display:flex;
     flex-direction:column;
     margin-left:210px;
+    min-width:0;
+    max-width:calc(100% - 210px);
 }
 
 .topbar{
@@ -583,6 +588,7 @@ tr:last-child td{
 
     .main{
         margin-left:60px;
+        max-width:calc(100% - 60px);
     }
 
     .kpis{
